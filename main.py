@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://site.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 db = SQLAlchemy(app)
 
 
@@ -22,7 +22,8 @@ class Device(db.Model):
     animation = db.Column(db.String(20), default=None)
 
 
-
+    def __repr__(self):
+        return '<Device %r>' % self.device_name
 
 
 
