@@ -1,3 +1,8 @@
+"""
+This is an app to control the settings of
+various IOT devices
+"""
+# Import Modules
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
@@ -10,6 +15,10 @@ db = SQLAlchemy(app)
 @app.route("/")
 def home():
     return "hello"
+    
+@app.route("/off")
+def off():
+    return 'turning off'
 
 
 
