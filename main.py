@@ -16,18 +16,38 @@ db = SQLAlchemy(app)
 def home():
     return "hello"
 
-@app.route("/off")
-def off():
-    return 'turning off'
+@app.route("/<item>/power/<state>")
+def power(state, item):
+    device = Device.query.filter_by(device_name=item)[0]
+    if state == 'off':
+        device.on_off = 'off'
+        db.session.commit()
+        return device.on_off
+    elif state == 'on':
+        device.on_off = 'on'
+        db.session.commit()
+        return device.on_off
+    else:
+        return 'WTF!!!'
 
+@app.route('/<item>/brightness/<level>')
+def brightness(item, level):
+    device = Device.query.filter_by(device_name=item)[0]
+    try:
+        int(level)
+        device.brightness = level
+        db.session.commit()
+        return device.brightness
+    except:
+        return 'brightness must be an integer'
 
 
 class Device(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     device_name = db.Column(db.String(20), unique=True, nullable=False)
-    on_off = db.Column(db.String(5), default='off')
-    color = db.Column(db.String(20), default='white')
-    brightness = db.Column(db.String(10),default='100')
+    on_off = db.Column(db.String(5), default='off', nullable=False)
+    color = db.Column(db.String(20), default='white', nullable=False)
+    brightness = db.Column(db.String(10),default='100',nullable=False)
     animation = db.Column(db.String(20), default=None)
 
 
