@@ -3,7 +3,7 @@ This is an app to control the settings of
 various IOT devices
 """
 # Import Modules
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -22,13 +22,13 @@ def power(state, item):
     if state == 'off':
         device.on_off = 'off'
         db.session.commit()
-        return device.on_off
+        return redirect(url_for('settings', item=device.device_name))
     elif state == 'on':
         device.on_off = 'on'
         db.session.commit()
-        return device.on_off
+        return redirect(url_for('settings', item=device.device_name))
     else:
-        return 'WTF!!!'
+        return redirect(url_for('settings', item=device.device_name))
 
 @app.route('/<item>/brightness/<level>')
 def brightness(item, level):
@@ -37,10 +37,28 @@ def brightness(item, level):
         int(level)
         device.brightness = level
         db.session.commit()
-        return device.brightness
+        return redirect(url_for('settings', item=device.device_name))
     except:
-        return 'brightness must be an integer'
+        return redirect(url_for('settings', item=device.device_name))
 
+@app.route('/<item>/color/<color>')
+def color(item, color):
+    device = Device.query.filter_by(device_name=item)[0]
+    device.color = color
+    db.session.commit()
+    return redirect(url_for('settings', item=device.device_name))
+
+@app.route('/<item>/animation/<animation>')
+def animation(item, animation):
+    device = Device.query.filter_by(device_name=item)[0]
+    device.animation = animation
+    db.session.commit()
+    return redirect(url_for('settings', item=device.device_name))
+
+@app.route('/<item>/settings')
+def settings(item):
+    device = Device.query.filter_by(device_name=item)[0]
+    return render_template('settings.html',device=device)
 
 class Device(db.Model):
     id = db.Column(db.Integer, primary_key=True)
