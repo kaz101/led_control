@@ -3,7 +3,7 @@ This is an app to control the settings of
 various IOT devices
 """
 # Import Modules
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -60,6 +60,13 @@ def settings(item):
     device = Device.query.filter_by(device_name=item)[0]
     return render_template('settings.html',device=device)
 
+@app.route('/<item>/get_settings')
+def get_settings(item):
+    device = Device.query.filter_by(device_name=item)[0]
+    del device.__dict__['_sa_instance_state']
+    j = jsonify(dict(device.__dict__))
+    return j
+
 class Device(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     device_name = db.Column(db.String(20), unique=True, nullable=False)
@@ -67,7 +74,6 @@ class Device(db.Model):
     color = db.Column(db.String(20), default='white', nullable=False)
     brightness = db.Column(db.String(10),default='100',nullable=False)
     animation = db.Column(db.String(20), default=None)
-
 
     def __repr__(self):
         return '<Device %r>' % self.device_name
