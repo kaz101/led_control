@@ -46,7 +46,7 @@ def color(item, color):
     device = Device.query.filter_by(device_name=item)[0]
     device.color = color
     db.session.commit()
-    return redirect(url_for('settings', item=device.device_name))
+    return redirect(url_for('animation',animation="none")
 
 @app.route('/<item>/animation/<animation>')
 def animation(item, animation):
