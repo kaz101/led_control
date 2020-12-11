@@ -27,6 +27,7 @@ def power(state, item):
         return redirect(url_for('settings', item=device.device_name))
     elif state == 'on':
         device.on_off = 'on'
+        device.change_color = "1"
         db.session.commit()
         return redirect(url_for('settings', item=device.device_name))
     else:
@@ -47,7 +48,7 @@ def brightness(item, level):
 def color(item, color):
     device = Device.query.filter_by(device_name=item)[0]
     device.color = color
-    device.change_color = 1
+    device.change_color = "1"
     device.animation = 'none'
     db.session.commit()
     return redirect(url_for('settings', item=device.device_name))
@@ -56,6 +57,8 @@ def color(item, color):
 def animation(item, animation):
     device = Device.query.filter_by(device_name=item)[0]
     device.animation = animation
+    if animation == "none":
+        device.change_color == "1"
     db.session.commit()
     return redirect(url_for('settings', item=device.device_name))
 
