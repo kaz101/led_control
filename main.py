@@ -5,13 +5,14 @@ various IOT devices
 # Import Modules
 from flask import Flask, render_template, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 db = SQLAlchemy(app)
 
-
+migrate = Migrate(app,db)
 @app.route("/")
 def home():
     return "hello"
@@ -45,8 +46,10 @@ def brightness(item, level):
 def color(item, color):
     device = Device.query.filter_by(device_name=item)[0]
     device.color = color
+    device.change_color = 1
+    device.animation = 'none'
     db.session.commit()
-    return redirect(url_for('animation',animation="none")
+    return redirect(url_for('settings', item=device.device_name))
 
 @app.route('/<item>/animation/<animation>')
 def animation(item, animation):
@@ -66,6 +69,12 @@ def get_settings(item):
     del device.__dict__['_sa_instance_state']
     j = jsonify(dict(device.__dict__))
     return j
+@app.route('/<item>/change_color/<var>')
+def change_col(item,var):
+    device = Device.query.filter_by(device_name=item)[0]
+    device.change_color = var
+    db.session.commit()
+    return redirect(url_for('settings',item=device.device_name))
 
 class Device(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -74,6 +83,7 @@ class Device(db.Model):
     color = db.Column(db.String(20), default='white', nullable=False)
     brightness = db.Column(db.String(10),default='100',nullable=False)
     animation = db.Column(db.String(20), default=None)
+    change_color = db.Column(db.String(10), default="0")
 
     def __repr__(self):
         return '<Device %r>' % self.device_name
