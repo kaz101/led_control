@@ -24,14 +24,14 @@ def power(state, item):
     if state == 'off':
         device.on_off = 'off'
         db.session.commit()
-        return redirect(url_for('settings', item=device.device_name))
+        return 'ok'
     elif state == 'on':
         device.on_off = 'on'
         device.change_color = "1"
         db.session.commit()
-        return redirect(url_for('settings', item=device.device_name))
+        return 'ok'
     else:
-        return redirect(url_for('settings', item=device.device_name))
+        return 'ok'
 
 @app.route('/<item>/brightness/<level>')
 def brightness(item, level):
@@ -40,9 +40,9 @@ def brightness(item, level):
         int(level)
         device.brightness = level
         db.session.commit()
-        return redirect(url_for('settings', item=device.device_name))
+        return 'ok'
     except:
-        return redirect(url_for('settings', item=device.device_name))
+        return 'ok'
 
 @app.route('/<item>/color/<color>')
 def color(item, color):
@@ -51,7 +51,7 @@ def color(item, color):
     device.change_color = "1"
     device.animation = 'none'
     db.session.commit()
-    return redirect(url_for('settings', item=device.device_name))
+    return 'ok'
 
 @app.route('/<item>/animation/<animation>')
 def animation(item, animation):
@@ -60,7 +60,7 @@ def animation(item, animation):
     if animation == "none":
         device.change_color == "1"
     db.session.commit()
-    return redirect(url_for('settings', item=device.device_name))
+    return 'ok'
 
 @app.route('/<item>/settings')
 def settings(item):
@@ -78,13 +78,14 @@ def change_col(item,var):
     device = Device.query.filter_by(device_name=item)[0]
     device.change_color = var
     db.session.commit()
-    return redirect(url_for('settings',item=device.device_name))
+    return 'ok'
 
 class Device(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     device_name = db.Column(db.String(20), unique=True, nullable=False)
     on_off = db.Column(db.String(5), default='off', nullable=False)
     color = db.Column(db.String(20), default='white', nullable=False)
+    saturation = db.Column(db.String(20), default='1', nullable=False)
     brightness = db.Column(db.String(10),default='100',nullable=False)
     animation = db.Column(db.String(20), default=None)
     change_color = db.Column(db.String(10), default="0")
