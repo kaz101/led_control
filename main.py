@@ -85,7 +85,7 @@ class Device(db.Model):
     device_name = db.Column(db.String(20), unique=True, nullable=False)
     on_off = db.Column(db.String(5), default='off', nullable=False)
     color = db.Column(db.String(20), default='white', nullable=False)
-    saturation = db.Column(db.String(20), default='1', nullable=False)
+    saturation = db.Column(db.String(20), default='1')
     brightness = db.Column(db.String(10),default='100',nullable=False)
     animation = db.Column(db.String(20), default=None)
     change_color = db.Column(db.String(10), default="0")
