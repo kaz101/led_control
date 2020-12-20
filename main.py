@@ -79,6 +79,12 @@ def change_col(item,var):
     device.change_color = var
     db.session.commit()
     return 'ok'
+@app.route('/<item>/saturation/<var>')
+def saturation(item, var):
+    device = Device.query.filter_by(device_name=item)[0]
+    device.saturation = var
+    db.session.commit()
+    return "ok"
 
 class Device(db.Model):
     id = db.Column(db.Integer, primary_key=True)
